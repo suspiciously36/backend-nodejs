@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trang đăng nhập</title>
+  </head>
+  <body>
+    <h1>Đăng nhập</h1>
+    <% if (msg?.length) { %> <%= msg %> <% } %>
+    <form action="/dang-nhap" method="post">
+      <div>
+        <label for="email"
+          >Email
+          <input
+            type="email"
+            name="email"
+            placeholder="Email..."
+            value="<%= req?.olds?.email %>"
+          />
+        </label>
+        <span><%= req?.errors?.email %></span>
+      </div>
+      <div>
+        <label for="password"
+          >Password
+          <input type="password" name="password" placeholder="Password..." />
+        </label>
+        <span><%= req?.errors?.password %></span>
+      </div>
+      <button>Đăng nhập</button>
+      <a href="/dang-ky">Tạo tài khoản mới</a>
+    </form>
+  </body>
+</html>
