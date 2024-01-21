@@ -10,4 +10,7 @@ router.get("/dang-xuat", indexController.logout);
 router.get("/dang-nhap", indexController.login);
 router.post("/dang-nhap", indexController.handleLogin);
 
+router.get("/dang-ky", indexController.register);
+router.post("/dang-ky", indexController.handleRegister);
+
 module.exports = router;

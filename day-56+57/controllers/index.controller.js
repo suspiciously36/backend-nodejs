@@ -10,8 +10,10 @@ module.exports = {
     res.render("index", { successMsg, req });
   },
   login(req, res) {
+    const logoutMsg = req.flash("logout-msg");
+    const successMsg = req.flash("success-msg");
     const msg = req.flash("msg");
-    res.render("login", { req, msg });
+    res.render("login", { req, msg, successMsg, logoutMsg });
   },
   async handleLogin(req, res, next) {
     const rule = {
@@ -62,7 +64,56 @@ module.exports = {
     }
     return res.redirect("/dang-nhap");
   },
+  register(req, res) {
+    const msg = req.flash("msg");
+    const passwordMsg = req.flash("password-msg");
+    res.render("register", { msg, req, passwordMsg });
+  },
+  async handleRegister(req, res, next) {
+    const rule = {
+      name: string().required("Bạn phải có tên chứ."),
+      email: string()
+        .required("Email bắt buộc phải nhập.")
+        .email("Email không đúng định dạng."),
+      password: string().required("Mật khẩu bắt buộc phải nhập."),
+      password2: string().required("Bắt buộc phải nhập lại mật khẩu."),
+    };
+
+    const body = await req.validate(req.body, rule);
+
+    if (body) {
+      try {
+        const user = await User.findOne({
+          where: { email: { [Op.iLike]: body.email } },
+        });
+
+        if (user) {
+          req.flash("msg", "Email đã tồn tại.");
+        } else {
+          if (body.password !== body.password2) {
+            req.flash("password-msg", "Hai mật khẩu không khớp.");
+            // return res.redirect("/dang-ky");
+          } else {
+            await User.create({
+              name: body.name,
+              email: body.email,
+              password: await bcrypt.hash(body.password, 15),
+              password2: await bcrypt.hash(body.password2, 15),
+            });
+
+            req.flash("success-msg", "Tạo tài khoản thành công.");
+
+            return res.redirect("/dang-nhap");
+          }
+        }
+      } catch (e) {
+        return next(e);
+      }
+    }
+    return res.redirect("/dang-ky");
+  },
   async logout(req, res, next) {
+    req.flash("logout-msg", "Đăng xuất thành công.");
     delete req.session.userSession;
     if (req.session.userSession) {
       console.log(`still there`);

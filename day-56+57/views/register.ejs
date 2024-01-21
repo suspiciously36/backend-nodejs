@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trang đăng ký</title>
+  </head>
+  <body>
+    <h1>Đăng ký</h1>
+    <% if (msg?.length) { %> <%= msg %> <% } %> <% if (passwordMsg?.length) { %>
+    <%= passwordMsg %> <% } %>
+    <form action="/dang-ky" method="post">
+      <div>
+        <label for="name"
+          >Name
+          <input
+            type="text"
+            name="name"
+            placeholder="Name..."
+            value="<%= req?.olds?.name %>"
+          />
+        </label>
+        <span><%= req?.errors?.name %></span>
+      </div>
+      <div>
+        <label for="email"
+          >Email
+          <input
+            type="email"
+            name="email"
+            placeholder="Email..."
+            value="<%= req?.olds?.email %>"
+          />
+        </label>
+        <span><%= req?.errors?.email %></span>
+      </div>
+      <div>
+        <label for="password"
+          >Password
+          <input type="password" name="password" placeholder="Password..." />
+        </label>
+        <span><%= req?.errors?.password %></span>
+      </div>
+      <div>
+        <label for="password2"
+          >Nhập lại Password
+          <input type="password" name="password2" placeholder="Password..." />
+        </label>
+        <span><%= req?.errors?.password2 %></span>
+      </div>
+      <button>Đăng ký</button>
+      <a href="/dang-nhap">Có tài khoản rồi à? Đăng nhập ngay thôi!</a>
+    </form>
+  </body>
+</html>

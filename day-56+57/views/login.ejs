@@ -7,7 +7,9 @@
   </head>
   <body>
     <h1>Đăng nhập</h1>
-    <% if (msg?.length) { %> <%= msg %> <% } %>
+    <% if (msg?.length) { %> <%= msg %> <% } %> <% if (logoutMsg?.length) { %>
+    <%= logoutMsg %> <% } %> <% if (successMsg?.length) { %> <%= successMsg %>
+    <% } %>
     <form action="/dang-nhap" method="post">
       <div>
         <label for="email"
