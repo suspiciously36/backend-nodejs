@@ -5,15 +5,17 @@
     <link rel="stylesheet" href="/stylesheets/style.css" />
   </head>
   <body>
-    <p><% if (successMsg?.length) { %> <%= successMsg %> <% } %></p>
+    <p class="d-flex justify-content-center text-success">
+      <% if (successMsg?.length) { %> <%= successMsg %> <% } %>
+    </p>
     <h1>Trang chủ</h1>
     <p>Welcome: <%= req?.session?.userSession?.name %></p>
     <p>Do you accept Cookies?</p>
-    <button>Yes</button>
-    <button>Yes</button>
+    <button class="btn btn-primary">Yes</button>
+    <button class="btn btn-danger">Yes</button>
     <hr />
     <form action="/dang-xuat">
-      <button>Đăng xuất</button>
+      <button class="btn btn-warning">Đăng xuất</button>
     </form>
   </body>
 </html>

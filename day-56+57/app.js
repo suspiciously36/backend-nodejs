@@ -3,6 +3,7 @@ var express = require("express");
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
+const expressEjsLayouts = require("express-ejs-layouts");
 const validateMiddleware = require("./middlewares/validate.middleware");
 const indexMiddleware = require("./middlewares/index.middleware");
 const dotenv = require("dotenv");
@@ -37,6 +38,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(flash());
 app.use(validateMiddleware);
 app.use(indexMiddleware);
+app.use(expressEjsLayouts);
 
 app.use("/", indexRouter);
 app.use("/users", usersRouter);

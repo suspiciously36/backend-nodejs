@@ -9,12 +9,14 @@ module.exports = {
     const successMsg = req.flash("success-msg");
     res.render("index", { successMsg, req });
   },
+
   login(req, res) {
     const logoutMsg = req.flash("logout-msg");
     const successMsg = req.flash("success-msg");
     const msg = req.flash("msg");
     res.render("login", { req, msg, successMsg, logoutMsg });
   },
+
   async handleLogin(req, res, next) {
     const rule = {
       email: string()
@@ -30,32 +32,52 @@ module.exports = {
         const user = await User.findOne({
           where: { email: { [Op.iLike]: body.email } },
         });
+        const passwordValid = await bcrypt.compare(
+          body.password,
+          user.password
+        );
         if (!user) {
-          req.flash("msg", "Email không tồn tại");
-        } else {
-          const userData = user?.dataValues;
-          const passwordValid = await bcrypt.compare(
-            body.password,
-            user.password
-          );
+          req.flash("msg", "Email không tồn tại.");
+          return res.redirect("/dang-nhap");
+        }
+        const userData = user?.dataValues;
+        if (!userData.status) {
           if (!passwordValid) {
-            req.flash("msg", "Email/Password không đúng");
+            req.flash("msg", "Email/Password không đúng.");
           } else {
-            const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
-              expiresIn: process.env.JWT_REFRESH_EXPIRATION,
-            });
+            req.flash(
+              "msg",
+              "Tài khoản này chưa được kích hoạt. (err::status=false)"
+            );
+          }
+        }
+        if (!userData.email) {
+          if (!passwordValid) {
+            req.flash("msg", "Email/Password không đúng.");
+          } else {
+            req.flash("msg", "Email không tồn tại");
+          }
+        } else {
+          if (userData.status) {
+            if (!passwordValid) {
+              req.flash("msg", "Email/Password không đúng");
+            } else {
+              const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+                expiresIn: process.env.JWT_REFRESH_EXPIRATION,
+              });
 
-            res.cookie("access_token", token);
+              res.cookie("access_token", token);
 
-            const userSession = {
-              name: userData.name,
-              email: userData.email,
-              accessToken: token,
-            };
+              const userSession = {
+                name: userData.name,
+                email: userData.email,
+                accessToken: token,
+              };
 
-            req.session.userSession = userSession;
-            req.flash("success-msg", "Đăng nhập thành công");
-            return res.redirect("/");
+              req.session.userSession = userSession;
+              req.flash("success-msg", "Đăng nhập thành công");
+              return res.redirect("/");
+            }
           }
         }
       } catch (e) {
@@ -64,11 +86,13 @@ module.exports = {
     }
     return res.redirect("/dang-nhap");
   },
+
   register(req, res) {
     const msg = req.flash("msg");
     const passwordMsg = req.flash("password-msg");
     res.render("register", { msg, req, passwordMsg });
   },
+
   async handleRegister(req, res, next) {
     const rule = {
       name: string().required("Bạn phải có tên chứ."),
@@ -92,7 +116,6 @@ module.exports = {
         } else {
           if (body.password !== body.password2) {
             req.flash("password-msg", "Hai mật khẩu không khớp.");
-            // return res.redirect("/dang-ky");
           } else {
             await User.create({
               name: body.name,
@@ -101,7 +124,10 @@ module.exports = {
               password2: await bcrypt.hash(body.password2, 15),
             });
 
-            req.flash("success-msg", "Tạo tài khoản thành công.");
+            req.flash(
+              "success-msg",
+              "Tạo tài khoản thành công. Vui lòng liên hệ admin để kích hoạt chứ chưa vào được luôn đâu."
+            );
 
             return res.redirect("/dang-nhap");
           }
@@ -112,6 +138,7 @@ module.exports = {
     }
     return res.redirect("/dang-ky");
   },
+
   async logout(req, res, next) {
     req.flash("logout-msg", "Đăng xuất thành công.");
     delete req.session.userSession;

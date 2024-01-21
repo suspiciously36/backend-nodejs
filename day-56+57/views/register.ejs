@@ -6,50 +6,71 @@
     <title>Trang đăng ký</title>
   </head>
   <body>
-    <h1>Đăng ký</h1>
-    <% if (msg?.length) { %> <%= msg %> <% } %> <% if (passwordMsg?.length) { %>
-    <%= passwordMsg %> <% } %>
-    <form action="/dang-ky" method="post">
-      <div>
-        <label for="name"
-          >Name
+    <h1 class="d-flex justify-content-center mt-5">Đăng ký</h1>
+    <div class="d-flex justify-content-center mb-3">
+      <span class="text-success"
+        ><% if (msg?.length) { %> <%= msg %> <% } %> </span
+      ><span class="text-danger"
+        ><% if (passwordMsg?.length) { %> <%= passwordMsg %> <% } %></span
+      >
+    </div>
+    <main class="form-signin w-50 m-auto">
+      <form action="/dang-ky" method="post">
+        <div class="form-floating mb-3">
           <input
+            class="form-control"
             type="text"
             name="name"
+            id="floatingName"
             placeholder="Name..."
             value="<%= req?.olds?.name %>"
           />
-        </label>
-        <span><%= req?.errors?.name %></span>
-      </div>
-      <div>
-        <label for="email"
-          >Email
+          <label for="floatingName">Name...</label>
+          <span class="text-danger"><%= req?.errors?.name %></span>
+        </div>
+        <div class="form-floating mb-3">
           <input
+            class="form-control"
             type="email"
             name="email"
+            id="floatingEmail"
             placeholder="Email..."
             value="<%= req?.olds?.email %>"
           />
-        </label>
-        <span><%= req?.errors?.email %></span>
-      </div>
-      <div>
-        <label for="password"
-          >Password
-          <input type="password" name="password" placeholder="Password..." />
-        </label>
-        <span><%= req?.errors?.password %></span>
-      </div>
-      <div>
-        <label for="password2"
-          >Nhập lại Password
-          <input type="password" name="password2" placeholder="Password..." />
-        </label>
-        <span><%= req?.errors?.password2 %></span>
-      </div>
-      <button>Đăng ký</button>
-      <a href="/dang-nhap">Có tài khoản rồi à? Đăng nhập ngay thôi!</a>
-    </form>
+          <label for="floatingEmail">Email...</label>
+
+          <span class="text-danger"><%= req?.errors?.email %></span>
+        </div>
+        <div class="form-floating mb-3">
+          <input
+            class="form-control"
+            type="password"
+            class="form-control"
+            name="password"
+            id="floatingPassword"
+            placeholder="Password..."
+          />
+          <label for="floatingPassword">Password...</label>
+
+          <span class="text-danger"><%= req?.errors?.password %></span>
+        </div>
+        <div class="form-floating mb-3">
+          <input
+            class="form-control"
+            type="password"
+            name="password2"
+            id="floatingPassword2"
+            placeholder="Password..."
+          />
+          <label for="floatingPassword">Nhập lại password...</label>
+
+          <span class="text-danger"><%= req?.errors?.password2 %></span>
+        </div>
+        <button class="btn btn-primary w-100 py-2 mb-3">Đăng ký</button>
+        <a href="/dang-nhap" class="d-flex justify-content-end"
+          >Có tài khoản rồi à? Đăng nhập ngay thôi!</a
+        >
+      </form>
+    </main>
   </body>
 </html>
