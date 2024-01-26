@@ -7,7 +7,6 @@ router.get("/", indexController.index);
 
 router.get("/dang-xuat", indexController.logout);
 router.get("/dang-xuat-all", indexController.universalLogout);
-router.get("/dang-xuat-only", indexController.sessionLogout);
 
 router.get("/dang-nhap", indexController.login);
 router.post("/dang-nhap", indexController.handleLogin);

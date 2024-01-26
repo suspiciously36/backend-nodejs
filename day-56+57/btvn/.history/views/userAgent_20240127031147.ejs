@@ -8,11 +8,9 @@
   <p>Đăng nhập lúc: <%= item.dataValues.login_time %></p>
   <p>Đăng xuất lúc: <%= %></p>
   <% if (userAgent === item.dataValues.user_agent) { %>
-  <p class="text-danger">---- (Current Session) ----</p>
+  <p class="text-red">---- (Current Session) ----</p>
   <% } %>
-  <form action="/dang-xuat-only">
-    <button class="btn btn-warning">Đăng xuất thiết bị này</button>
-  </form>
+  <button class="btn btn-warning">Đăng xuất thiết bị này</button>
   <hr />
   <% } %> <% if (!item.dataValues.is_logged_in) { %>
   <p>Tên thiết bị: <%= item.dataValues.device_type %></p>

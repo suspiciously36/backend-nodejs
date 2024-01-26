@@ -392,31 +392,15 @@ module.exports = {
     return res.redirect("/dang-nhap");
   },
 
-  async sessionLogout(req, res, next) {
-    const session = req.session.userSession;
-
-    await UserAgent.update(
-      {
-        logout_time: "now()",
-        is_logged_in: false,
-      },
-      { where: { id: session.userAgent_id } }
-    );
-    // delete req.session.userSession;
-    req.flash("logout-msg", "Đăng xuất thiết bị thành công.");
-
-    return res.redirect("/");
-  },
-
   async universalLogout(req, res, next) {
-    const session = req.session.userSession;
+const {id} = req.session.userSession
 
     await UserAgent.update(
       {
         logout_time: "now()",
         is_logged_in: false,
       },
-      { where: { user_id: session.id } }
+      { where: {user_id: } }
     );
     delete req.session.userSession;
     req.flash("logout-msg", "Đăng xuất tất cả thiết bị thành công.");

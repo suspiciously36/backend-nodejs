@@ -402,7 +402,7 @@ module.exports = {
       },
       { where: { id: session.userAgent_id } }
     );
-    // delete req.session.userSession;
+    delete req.session.userSession;
     req.flash("logout-msg", "Đăng xuất thiết bị thành công.");
 
     return res.redirect("/");
