@@ -80,7 +80,7 @@ module.exports = {
               // res.cookie("access_token", token);
 
               const userAgentData = await UserAgent.findOne({
-                where: { user_id: userData.id, user_agent: userAgent },
+                where: { user_id: userData.id },
               });
 
               if (!userAgentData) {
@@ -96,10 +96,8 @@ module.exports = {
               }
 
               const userAgentDataIfExisted = await UserAgent.findOne({
-                where: { user_id: userData.id, user_agent: userAgent },
+                where: { user_id: userData.id },
               });
-
-              console.log(userAgentDataIfExisted.dataValues.user_agent);
 
               if (userAgent !== userAgentDataIfExisted.dataValues.user_agent) {
                 console.log("tạo tại không thấy trùng userAgent");
@@ -121,24 +119,10 @@ module.exports = {
                   {
                     where: {
                       user_id: userData.id,
-                      user_agent: userAgent,
                     },
                   }
                 );
               }
-
-              await UserAgent.update(
-                {
-                  login_time: "now()",
-                  is_logged_in: true,
-                },
-                {
-                  where: {
-                    user_id: userData.id,
-                    user_agent: userAgent,
-                  },
-                }
-              );
 
               const userSession = {
                 id: userData.id,
@@ -149,7 +133,6 @@ module.exports = {
               };
 
               req.session.userSession = userSession;
-              console.log(req.session.userSession);
               req.flash("success-msg", "Đăng nhập thành công!");
               return res.redirect("/");
             }
@@ -340,6 +323,7 @@ module.exports = {
         userAgent,
       });
     }
+    // res.render("userAgent");
   },
 
   async handleUserAgent(req, res, next) {

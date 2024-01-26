@@ -121,7 +121,6 @@ module.exports = {
                   {
                     where: {
                       user_id: userData.id,
-                      user_agent: userAgent,
                     },
                   }
                 );
@@ -331,7 +330,7 @@ module.exports = {
       const userLoggedIn = req.session.userSession;
 
       const userAgentInfo = await UserAgent.findAll({
-        where: { user_id: userLoggedIn.id },
+        where: { user_id: userLoggedIn.id, user_agent: userAgent },
       });
 
       res.render("userAgent", {
@@ -340,6 +339,7 @@ module.exports = {
         userAgent,
       });
     }
+    // res.render("userAgent");
   },
 
   async handleUserAgent(req, res, next) {

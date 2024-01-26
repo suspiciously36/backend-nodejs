@@ -340,6 +340,7 @@ module.exports = {
         userAgent,
       });
     }
+    // res.render("userAgent");
   },
 
   async handleUserAgent(req, res, next) {

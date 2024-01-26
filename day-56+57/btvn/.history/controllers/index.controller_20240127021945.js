@@ -121,7 +121,6 @@ module.exports = {
                   {
                     where: {
                       user_id: userData.id,
-                      user_agent: userAgent,
                     },
                   }
                 );
@@ -340,6 +339,7 @@ module.exports = {
         userAgent,
       });
     }
+    // res.render("userAgent");
   },
 
   async handleUserAgent(req, res, next) {

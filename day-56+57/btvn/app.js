@@ -27,6 +27,9 @@ app.use(
     secret: "secretasfkbois",
     resave: false,
     saveUninitialized: true,
+    cookie: {
+      maxAge: 360000000000,
+    },
   })
 );
 

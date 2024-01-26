@@ -18,15 +18,15 @@ module.exports = async (req, res, next) => {
   }
 
   if (req.session?.userSession) {
-    const {
-      dataValues: { is_logged_in },
-    } = await UserAgent.findOne({
-      where: { id: req.session?.userSession?.userAgent_id },
+    const data = await UserAgent.findAll({
+      where: { id: { [Op.not]: req.session?.userSession?.userAgent_id } },
     });
-    if (!is_logged_in) {
-      delete req.session.userSession;
-      return res.redirect("/dang-nhap");
-    }
+    data.map((item) => {
+      if (!item.dataValues.is_logged_in) {
+        delete req.session.userSession;
+        return res.redirect("/dang-nhap");
+      }
+    });
   }
   next();
 };

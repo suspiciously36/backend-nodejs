@@ -1,5 +1,5 @@
-const { Op } = require("sequelize");
-const { UserAgent } = require("../models/index");
+// const { Op, where } = require("sequelize");
+const { User } = require("../models/index");
 
 module.exports = async (req, res, next) => {
   if (
@@ -16,12 +16,11 @@ module.exports = async (req, res, next) => {
   ) {
     return res.redirect("/");
   }
-
   if (req.session?.userSession) {
     const {
       dataValues: { is_logged_in },
-    } = await UserAgent.findOne({
-      where: { id: req.session?.userSession?.userAgent_id },
+    } = await User.findOne({
+      where: { id: req.session?.userSession?.id },
     });
     if (!is_logged_in) {
       delete req.session.userSession;

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trang sửa thông tin</title>
+  </head>
+  <body>
+    <h1 class="d-flex justify-content-center mt-5">Sửa thông tin tài khoản</h1>
+    <div class="d-flex justify-content-center mb-3">
+      <span class="text-success"
+        ><% if (msg?.length) { %> <%= msg %> <% } %>
+      </span>
+    </div>
+    <main class="form-signin w-50 m-auto">
+      <form action="/sua-thong-tin" method="post">
+        <div class="form-floating mb-3">
+          <input
+            class="form-control"
+            type="text"
+            name="name"
+            id="floatingName"
+            placeholder="Name..."
+            value="<%= req?.session?.userSession?.name %>"
+          />
+          <label for="floatingName">Name...</label>
+          <span class="text-danger"><%= req?.errors?.name %></span>
+        </div>
+        <div class="form-floating mb-3">
+          <input
+            class="form-control"
+            type="email"
+            name="email"
+            id="floatingEmail"
+            placeholder="Email..."
+            value="<%= req?.session?.userSession?.email %>"
+          />
+          <label for="floatingEmail">Email...</label>
+
+          <span class="text-danger"><%= req?.errors?.email %></span>
+        </div>
+
+        <button class="btn btn-primary w-100 py-2 mb-3">Lưu</button>
+        <a href="/" class="btn btn-danger w-100 py-2 mb-3">Hủy</a>
+      </form>
+    </main>
+  </body>
+</html>

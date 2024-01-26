@@ -79,77 +79,29 @@ module.exports = {
 
               // res.cookie("access_token", token);
 
-              const userAgentData = await UserAgent.findOne({
-                where: { user_id: userData.id, user_agent: userAgent },
+              await UserAgent.create({
+                user_id: userData.id,
+                device_type: result.device.type,
+                os_name: result.os.name,
+                client_name: result.client.name,
+                user_agent: userAgent,
+                login_time: "now()",
+                is_logged_in: true,
               });
 
-              if (!userAgentData) {
-                await UserAgent.create({
-                  user_id: userData.id,
-                  device_type: result.device.type,
-                  os_name: result.os.name,
-                  client_name: result.client.name,
-                  user_agent: userAgent,
-                  login_time: "now()",
-                  is_logged_in: true,
-                });
-              }
-
-              const userAgentDataIfExisted = await UserAgent.findOne({
-                where: { user_id: userData.id, user_agent: userAgent },
+              const userAgentData = UserAgent.findOne({
+                where: { user_id: userData.id },
               });
-
-              console.log(userAgentDataIfExisted.dataValues.user_agent);
-
-              if (userAgent !== userAgentDataIfExisted.dataValues.user_agent) {
-                console.log("tạo tại không thấy trùng userAgent");
-
-                await UserAgent.create({
-                  user_id: userData.id,
-                  device_type: result.device.type,
-                  os_name: result.os.name,
-                  client_name: result.client.name,
-                  login_time: "now()",
-                  user_agent: userAgent,
-                  is_logged_in: true,
-                });
-              } else {
-                await UserAgent.update(
-                  {
-                    login_time: "now()",
-                  },
-                  {
-                    where: {
-                      user_id: userData.id,
-                      user_agent: userAgent,
-                    },
-                  }
-                );
-              }
-
-              await UserAgent.update(
-                {
-                  login_time: "now()",
-                  is_logged_in: true,
-                },
-                {
-                  where: {
-                    user_id: userData.id,
-                    user_agent: userAgent,
-                  },
-                }
-              );
+              console.log(userAgentData);
 
               const userSession = {
                 id: userData.id,
                 name: userData.name,
                 email: userData.email,
-                userAgent_id: userAgentDataIfExisted.dataValues.id,
-                is_logged_in: userAgentDataIfExisted.dataValues.is_logged_in,
+                is_logged_in: userAgentData.dataValues.is_logged_in,
               };
 
               req.session.userSession = userSession;
-              console.log(req.session.userSession);
               req.flash("success-msg", "Đăng nhập thành công!");
               return res.redirect("/");
             }
@@ -279,17 +231,13 @@ module.exports = {
 
     if (body) {
       try {
-        const userAgent = req.get("user-agent");
         const user = req.session.userSession;
         const { dataValues: userLoggedIn } = await User.findOne({
           where: { email: { [Op.iLike]: user.email } },
         });
         const {
           dataValues: { id },
-        } = await UserAgent.findOne({
-          where: { user_id: user.id, user_agent: userAgent },
-        });
-        console.log(id);
+        } = await UserAgent.findOne({ where: { user_id: user.id } });
         const passwordValid = await bcrypt.compare(
           body.password,
           userLoggedIn.password
@@ -326,8 +274,6 @@ module.exports = {
 
   async userAgent(req, res) {
     if (req.session.userSession) {
-      const userAgent = req.get("user-agent");
-
       const userLoggedIn = req.session.userSession;
 
       const userAgentInfo = await UserAgent.findAll({
@@ -337,9 +283,9 @@ module.exports = {
       res.render("userAgent", {
         req,
         userAgentInfo,
-        userAgent,
       });
     }
+    // res.render("userAgent");
   },
 
   async handleUserAgent(req, res, next) {
@@ -361,10 +307,52 @@ module.exports = {
         where: { user_id: userLoggedIn.id },
       });
 
-      // Getting dataValues
-      const userAgentData = userAgentInfo.dataValues;
+      // Do this if this is the first time getting user-agent information
+      if (!userAgentInfo) {
+        console.log("tạo tại không thấy có userAgentInfo");
 
-      // Creating new user-agent db if this is another session logging in
+        // Creating user-agent info without access_token
+        await UserAgent.create({
+          user_id: userLoggedIn.id,
+          device_type: result.device.type,
+          os_name: result.os.name,
+          client_name: result.client.name,
+          login_time: "now()",
+          user_agent: userAgent,
+          is_logged_in: true,
+        });
+      } else {
+        // Getting dataValues
+        const userAgentData = userAgentInfo.dataValues;
+
+        // Creating new user-agent db if this is another session logging in
+        if (
+          userAgentInfo.dataValues.user_agent !== userAgentData.access_token
+        ) {
+          console.log("tạo tại không thấy trùng userAgent");
+
+          await UserAgent.create({
+            user_id: userLoggedIn.id,
+            device_type: result.device.type,
+            os_name: result.os.name,
+            client_name: result.client.name,
+            login_time: "now()",
+            user_agent: userAgent,
+            is_logged_in: true,
+          });
+        } else {
+          await UserAgent.update(
+            {
+              login_time: "now()",
+            },
+            {
+              where: {
+                user_id: userLoggedIn.id,
+              },
+            }
+          );
+        }
+      }
 
       // Getting user-agent if it existed in db
     } catch (e) {
@@ -376,12 +364,19 @@ module.exports = {
   async logout(req, res, next) {
     const userAgent = req.get("user-agent");
 
+    const cookieAccessToken = req.cookies.access_token;
+
     await UserAgent.update(
       {
         logout_time: "now()",
+      },
+      { where: { access_token: cookieAccessToken } }
+    );
+    await User.update(
+      {
         is_logged_in: false,
       },
-      { where: { user_agent: userAgent } }
+      { where: {} }
     );
     delete req.session.userSession;
     // res.clearCookie("access_token");

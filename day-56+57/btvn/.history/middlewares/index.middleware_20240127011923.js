@@ -1,4 +1,4 @@
-const { Op } = require("sequelize");
+// const { Op, where } = require("sequelize");
 const { UserAgent } = require("../models/index");
 
 module.exports = async (req, res, next) => {
@@ -16,7 +16,6 @@ module.exports = async (req, res, next) => {
   ) {
     return res.redirect("/");
   }
-
   if (req.session?.userSession) {
     const {
       dataValues: { is_logged_in },

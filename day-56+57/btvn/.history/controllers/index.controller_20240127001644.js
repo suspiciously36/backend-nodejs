@@ -73,69 +73,37 @@ module.exports = {
             if (!passwordValid) {
               req.flash("msg", "Email/Password không đúng.");
             } else {
-              // const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
-              //   expiresIn: process.env.JWT_REFRESH_EXPIRATION,
+              const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+                expiresIn: process.env.JWT_REFRESH_EXPIRATION,
+              });
+
+              res.cookie("access_token", token);
+              // await UserAgent.create({
+              //   user_id: userData.id,
+              //   device_type: result.device.type,
+              //   os_name: result.os.name,
+              //   client_name: result.client.name,
+              //   login_time: "now()",
+              //   access_token: token,
+              //   is_logged_in: true,
               // });
 
-              // res.cookie("access_token", token);
+              // const userAgentInfo = await UserAgent.findOne({
+              //   where: {
+              //     user_id: userData.id,
+              //     access_token: token,
+              //   },
+              // });
 
-              const userAgentData = await UserAgent.findOne({
-                where: { user_id: userData.id, user_agent: userAgent },
-              });
+              // const userAgentInfoData = userAgentInfo?.dataValues;
 
-              if (!userAgentData) {
-                await UserAgent.create({
-                  user_id: userData.id,
-                  device_type: result.device.type,
-                  os_name: result.os.name,
-                  client_name: result.client.name,
-                  user_agent: userAgent,
-                  login_time: "now()",
-                  is_logged_in: true,
-                });
-              }
-
-              const userAgentDataIfExisted = await UserAgent.findOne({
-                where: { user_id: userData.id, user_agent: userAgent },
-              });
-
-              console.log(userAgentDataIfExisted.dataValues.user_agent);
-
-              if (userAgent !== userAgentDataIfExisted.dataValues.user_agent) {
-                console.log("tạo tại không thấy trùng userAgent");
-
-                await UserAgent.create({
-                  user_id: userData.id,
-                  device_type: result.device.type,
-                  os_name: result.os.name,
-                  client_name: result.client.name,
-                  login_time: "now()",
-                  user_agent: userAgent,
-                  is_logged_in: true,
-                });
-              } else {
-                await UserAgent.update(
-                  {
-                    login_time: "now()",
-                  },
-                  {
-                    where: {
-                      user_id: userData.id,
-                      user_agent: userAgent,
-                    },
-                  }
-                );
-              }
-
-              await UserAgent.update(
+              await User.update(
                 {
-                  login_time: "now()",
                   is_logged_in: true,
                 },
                 {
                   where: {
-                    user_id: userData.id,
-                    user_agent: userAgent,
+                    id: userData.id,
                   },
                 }
               );
@@ -144,8 +112,8 @@ module.exports = {
                 id: userData.id,
                 name: userData.name,
                 email: userData.email,
-                userAgent_id: userAgentDataIfExisted.dataValues.id,
-                is_logged_in: userAgentDataIfExisted.dataValues.is_logged_in,
+                accessToken: token,
+                is_logged_in: userData.is_logged_in,
               };
 
               req.session.userSession = userSession;
@@ -279,17 +247,13 @@ module.exports = {
 
     if (body) {
       try {
-        const userAgent = req.get("user-agent");
         const user = req.session.userSession;
         const { dataValues: userLoggedIn } = await User.findOne({
           where: { email: { [Op.iLike]: user.email } },
         });
         const {
           dataValues: { id },
-        } = await UserAgent.findOne({
-          where: { user_id: user.id, user_agent: userAgent },
-        });
-        console.log(id);
+        } = await UserAgent.findOne({ where: { user_id: user.id } });
         const passwordValid = await bcrypt.compare(
           body.password,
           userLoggedIn.password
@@ -326,8 +290,6 @@ module.exports = {
 
   async userAgent(req, res) {
     if (req.session.userSession) {
-      const userAgent = req.get("user-agent");
-
       const userLoggedIn = req.session.userSession;
 
       const userAgentInfo = await UserAgent.findAll({
@@ -337,9 +299,9 @@ module.exports = {
       res.render("userAgent", {
         req,
         userAgentInfo,
-        userAgent,
       });
     }
+    // res.render("userAgent");
   },
 
   async handleUserAgent(req, res, next) {
@@ -361,12 +323,64 @@ module.exports = {
         where: { user_id: userLoggedIn.id },
       });
 
-      // Getting dataValues
-      const userAgentData = userAgentInfo.dataValues;
+      // Do this if this is the first time getting user-agent information
+      if (!userAgentInfo) {
+        console.log("tạo tại không thấy có userAgentInfo");
 
-      // Creating new user-agent db if this is another session logging in
+        // Creating user-agent info without access_token
+        await UserAgent.create({
+          user_id: userLoggedIn.id,
+          device_type: result.device.type,
+          os_name: result.os.name,
+          client_name: result.client.name,
+          login_time: "now()",
+          user_agent: userAgent,
+          is_logged_in: true,
+        });
+      }
 
       // Getting user-agent if it existed in db
+
+      if (userAgentInfo) {
+        const userAgentInfoIfExisted = await UserAgent.findOne({
+          where: {
+            user_id: userLoggedIn.id,
+            access_token: userLoggedIn.accessToken,
+          },
+        });
+
+        // Getting dataValues
+        const userAgentData = userAgentInfoIfExisted.dataValues;
+
+        // Creating new user-agent db if this is another session logging in
+        if (
+          userAgentInfo.dataValues.accessToken !== userAgentData.access_token
+        ) {
+          console.log("tạo tại không thấy trùng userAgent");
+
+          await UserAgent.create({
+            user_id: userLoggedIn.id,
+            device_type: result.device.type,
+            os_name: result.os.name,
+            client_name: result.client.name,
+            login_time: "now()",
+            user_agent: userAgent,
+            access_token: userAgentData.access_token,
+          });
+        } else {
+          await UserAgent.update(
+            {
+              login_time: "now()",
+            },
+            {
+              where: {
+                user_id: userLoggedIn.id,
+                access_token: userLoggedIn.accessToken,
+              },
+            }
+          );
+        }
+      }
     } catch (e) {
       next(e);
     }
@@ -376,12 +390,19 @@ module.exports = {
   async logout(req, res, next) {
     const userAgent = req.get("user-agent");
 
+    const cookieAccessToken = req.cookies.access_token;
+
     await UserAgent.update(
       {
         logout_time: "now()",
+      },
+      { where: { access_token: cookieAccessToken } }
+    );
+    await User.update(
+      {
         is_logged_in: false,
       },
-      { where: { user_agent: userAgent } }
+      { where: {} }
     );
     delete req.session.userSession;
     // res.clearCookie("access_token");

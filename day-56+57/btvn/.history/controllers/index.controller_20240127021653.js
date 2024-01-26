@@ -121,24 +121,10 @@ module.exports = {
                   {
                     where: {
                       user_id: userData.id,
-                      user_agent: userAgent,
                     },
                   }
                 );
               }
-
-              await UserAgent.update(
-                {
-                  login_time: "now()",
-                  is_logged_in: true,
-                },
-                {
-                  where: {
-                    user_id: userData.id,
-                    user_agent: userAgent,
-                  },
-                }
-              );
 
               const userSession = {
                 id: userData.id,
@@ -340,6 +326,7 @@ module.exports = {
         userAgent,
       });
     }
+    // res.render("userAgent");
   },
 
   async handleUserAgent(req, res, next) {
