@@ -341,6 +341,7 @@ module.exports = {
         userAgent,
         logoutMsgSession,
       });
+      return res.redirect("/thiet-bi");
     }
   },
 
@@ -407,7 +408,7 @@ module.exports = {
     // delete req.session.userSession;
     req.flash("logout-msg-session", "Đăng xuất thiết bị thành công.");
 
-    return res.redirect("/thiet-bi");
+    return res.redirect("/");
   },
 
   async universalLogout(req, res, next) {

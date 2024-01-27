@@ -335,6 +335,11 @@ module.exports = {
       const userAgentInfo = await UserAgent.findAll({
         where: { user_id: userLoggedIn.id },
       });
+
+      for (item of userAgentInfo.entries()) {
+        console.log(item[0]);
+      }
+
       res.render("userAgent", {
         req,
         userAgentInfo,
@@ -407,7 +412,7 @@ module.exports = {
     // delete req.session.userSession;
     req.flash("logout-msg-session", "Đăng xuất thiết bị thành công.");
 
-    return res.redirect("/thiet-bi");
+    return res.redirect("/");
   },
 
   async universalLogout(req, res, next) {

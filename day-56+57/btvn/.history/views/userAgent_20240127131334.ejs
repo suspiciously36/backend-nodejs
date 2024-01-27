@@ -1,9 +1,7 @@
 <h1>Danh sách thiết bị đã đăng nhập:</h1>
-<% if (logoutMsgSession?.length) { %>
-<p class="mb-3 text-success"><%= logoutMsgSession %></p>
-<% } %>
+
 <div>
-  <% for( [index, item ] of userAgentInfo.entries() ) { %> <% if
+  <% for( [item, index] of userAgentInfo.entries() ) { %> <% if
   (item.dataValues.is_logged_in) { %>
   <p>Tên thiết bị: <%= item.dataValues.device_type %></p>
   <p>Tên hệ điều hành: <%= item.dataValues.os_name %></p>
@@ -13,7 +11,7 @@
   <% if (userAgent === item.dataValues.user_agent) { %>
   <p class="text-danger">---- (Current Session) ----</p>
   <% } %>
-  <form action="<%=`/dang-xuat-only/${item.dataValues.id}` %>">
+  <form action="/dang-xuat-only">
     <button class="btn btn-warning">Đăng xuất thiết bị này</button>
   </form>
   <hr />
@@ -30,7 +28,6 @@
   <% } %> <% } %>
 </div>
 
-<form action="/dang-xuat-all" class="d-inline">
+<form action="/dang-xuat-all">
   <button class="btn btn-danger mb-3">Đăng xuất ở mọi thiết bị</button>
 </form>
-<a href="/" class="btn btn-primary mb-3">Trở về trang chủ</a>

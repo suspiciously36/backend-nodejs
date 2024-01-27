@@ -21,7 +21,7 @@ router.post("/sua-thong-tin", indexController.handleEdit);
 router.get("/doi-mat-khau", indexController.changePassword);
 router.post("/doi-mat-khau", indexController.handleChangePassword);
 
-router.get("/thiet-bi", indexController.userAgent);
+router.get("/thiet-bi/:id", indexController.userAgent);
 router.post("/thiet-bi", indexController.handleUserAgent);
 
 module.exports = router;

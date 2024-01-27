@@ -327,7 +327,6 @@ module.exports = {
 
   async userAgent(req, res) {
     if (req.session.userSession) {
-      const logoutMsgSession = req.flash("logout-msg-session");
       const userAgent = req.get("user-agent");
 
       const userLoggedIn = req.session.userSession;
@@ -335,11 +334,15 @@ module.exports = {
       const userAgentInfo = await UserAgent.findAll({
         where: { user_id: userLoggedIn.id },
       });
+
+      for ([index, item] of userAgentInfo.entries()) {
+        console.log(index, item, item[index]);
+      }
+
       res.render("userAgent", {
         req,
         userAgentInfo,
         userAgent,
-        logoutMsgSession,
       });
     }
   },
@@ -405,9 +408,9 @@ module.exports = {
       { where: { id: id } }
     );
     // delete req.session.userSession;
-    req.flash("logout-msg-session", "Đăng xuất thiết bị thành công.");
+    req.flash("logout-msg", "Đăng xuất thiết bị thành công.");
 
-    return res.redirect("/thiet-bi");
+    return res.redirect("/");
   },
 
   async universalLogout(req, res, next) {
