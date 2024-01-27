@@ -293,8 +293,6 @@ module.exports = {
         } else {
           if (body.newPassword !== body.newPassword2) {
             req.flash("msg", "Hai mật khẩu mới không khớp.");
-          } else if (body.newPassword === body.password) {
-            req.flash("msg", "Mật khẩu mới không được trùng với mật khẩu cũ.");
           } else {
             await User.update(
               {

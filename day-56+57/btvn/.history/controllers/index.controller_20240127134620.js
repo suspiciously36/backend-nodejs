@@ -147,6 +147,7 @@ module.exports = {
               };
 
               req.session.userSession = userSession;
+              console.log(req.session.userSession);
               req.flash("success-msg", "Đăng nhập thành công!");
               return res.redirect("/");
             }
@@ -212,6 +213,8 @@ module.exports = {
   },
 
   edit(req, res) {
+    console.log(req.session.userSession.is_logged_in);
+
     const msg = req.flash("msg");
     const successMsg = req.flash("success-msg");
     res.render("infoUpdate", { req, msg, successMsg });
@@ -284,6 +287,7 @@ module.exports = {
         } = await UserAgent.findOne({
           where: { user_id: user.id, user_agent: userAgent },
         });
+        console.log(id);
         const passwordValid = await bcrypt.compare(
           body.password,
           userLoggedIn.password
@@ -293,8 +297,6 @@ module.exports = {
         } else {
           if (body.newPassword !== body.newPassword2) {
             req.flash("msg", "Hai mật khẩu mới không khớp.");
-          } else if (body.newPassword === body.password) {
-            req.flash("msg", "Mật khẩu mới không được trùng với mật khẩu cũ.");
           } else {
             await User.update(
               {

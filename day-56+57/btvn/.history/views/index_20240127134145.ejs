@@ -9,12 +9,7 @@
       <% if (successMsg?.length) { %> <%= successMsg %> <% } %>
     </p>
     <h1>Trang chủ</h1>
-    <p class="display-6">
-      Welcome:
-      <span class="display-6"
-        ><i><%= req?.session?.userSession?.name %></i></span
-      >
-    </p>
+    <p>Welcome: <span><%= req?.session?.userSession?.name %></span></p>
     <h3>
       Cập nhật thông tin tài khoản:
       <a href="/sua-thong-tin" class="btn btn-primary">Bấm vào đây</a>
