@@ -1,0 +1,30 @@
+<h1>Danh sách thiết bị đã đăng nhập:</h1>
+
+<div>
+  <% for( item of userAgentInfo ) { %> <% if (item.dataValues.is_logged_in) { %>
+  <p>Tên thiết bị: <%= item.dataValues.device_type %></p>
+  <p>Tên hệ điều hành: <%= item.dataValues.os_name %></p>
+  <p>Tên trình duyệt: <%= item.dataValues.client_name %></p>
+  <p>Đăng nhập lúc: <%= item.dataValues.login_time %></p>
+  <p>Đăng xuất lúc: <%= %></p>
+  <% if (userAgent === item.dataValues.user_agent) { %>
+  <p class="text-warning">---- (Current Session) ----</p>
+  <% } %>
+  <button class="btn btn-warning">Đăng xuất thiết bị này</button>
+  <hr />
+  <% } %> <% if (!item.dataValues.is_logged_in) { %>
+  <p>Tên thiết bị: <%= item.dataValues.device_type %></p>
+  <p>Tên hệ điều hành: <%= item.dataValues.os_name %></p>
+  <p>Tên trình duyệt: <%= item.dataValues.client_name %></p>
+  <p>Lần cuối đăng nhập lúc: <%= item.dataValues.login_time %></p>
+  <p>Đăng xuất lúc: <%= item.dataValues.logout_time %></p>
+  <% if (userAgent === item.dataValues.user_agent) { %> <% } %>
+  <button class="btn btn-warning" disabled>Thiết bị này đã đăng xuất</button>
+  <hr />
+
+  <% } %> <% } %>
+</div>
+
+<form action="/dang-xuat-all">
+  <button class="btn btn-danger mb-3">Đăng xuất ở mọi thiết bị</button>
+</form>
