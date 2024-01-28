@@ -1,0 +1,48 @@
+<h1>Form gửi mail:</h1>
+<form action="/gui-mail" method="post">
+  <div class="mb-3">
+    <label for="exampleFormControlInput1" class="form-label">Gửi đến:</label>
+    <input
+      type="email"
+      name="sendTo"
+      class="form-control"
+      id="exampleFormControlInput1"
+      placeholder="Bạn muốn gửi email đến ai? Điền email vào đây..."
+      value="<%= req?.olds?.sendTo %>"
+    />
+    <span class="text-danger"><%= req?.errors?.sendTo %></span>
+  </div>
+
+  <div class="mb-3">
+    <label for="exampleFormControlInput2" class="form-label">Tiêu đề:</label>
+    <input
+      type="text"
+      name="title"
+      class="form-control"
+      id="exampleFormControlInput2"
+      placeholder="Điền tiêu đề của email..."
+      value="<%= req?.olds?.title %>"
+    />
+    <span class="text-danger"><%= req?.errors?.title %></span>
+  </div>
+
+  <div class="mb-3">
+    <label for="exampleFormControlTextarea1" class="form-label"
+      >Nội dung:</label
+    >
+    <textarea
+      class="form-control"
+      name="content"
+      id="exampleFormControlTextarea1"
+      rows="3"
+      placeholder="Nội dung của email muốn gửi..."
+      value="<%= req?.olds?.content %>"
+    ></textarea>
+    <span class="text-danger"><%= req?.errors?.content %></span>
+  </div>
+
+  <button class="btn btn-primary mb-3">Send mail button</button>
+</form>
+<a href="/" class="btn btn-danger">Trở về trang chủ</a>
+<span><u>HOẶC:</u></span>
+<a href="/" class="btn btn-warning">Xem lịch sử gửi mail</a>

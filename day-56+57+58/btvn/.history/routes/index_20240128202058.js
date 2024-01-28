@@ -25,7 +25,7 @@ router.post("/doi-mat-khau", indexController.handleChangePassword);
 router.get("/thiet-bi", indexController.userAgent);
 router.post("/thiet-bi", indexController.handleUserAgent);
 
-router.get("/gui-mail", mailController.sendMailForm);
+router.get("/gui-mail", mailController.sendMail);
 router.post("/gui-mail", mailController.handleSendMail);
 
 module.exports = router;

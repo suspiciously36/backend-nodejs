@@ -276,43 +276,43 @@ module.exports = {
       try {
         const userAgent = req.get("user-agent");
         const user = req.session.userSession;
-        const { dataValues: userLoggedIn } = await User.findOne({
+        const userLoggedIn = await User.findOne({
           where: { email: { [Op.iLike]: user.email } },
         });
-        const {
-          dataValues: { id },
-        } = await UserAgent.findOne({
+        const userAgentId = await UserAgent.findOne({
           where: { user_id: user.id, user_agent: userAgent },
         });
         const passwordValid = await bcrypt.compare(
           body.password,
-          userLoggedIn.password
+          userLoggedIn.dataValues.password
         );
+        if (body.newPassword === body.password) {
+          req.flash("msg", "Mật khẩu mới không được trùng với mật khẩu cũ.");
+          return res.redirect("/doi-mat-khau");
+        }
+        if (body.newPassword !== body.newPassword2) {
+          req.flash("msg", "Hai mật khẩu mới không khớp.");
+          return res.redirect("/doi-mat-khau");
+        }
         if (!passwordValid) {
           req.flash("msg", "Mật khẩu cũ không đúng.");
         } else {
-          if (body.newPassword !== body.newPassword2) {
-            req.flash("msg", "Hai mật khẩu mới không khớp.");
-          } else if (body.newPassword === body.password) {
-            req.flash("msg", "Mật khẩu mới không được trùng với mật khẩu cũ.");
-          } else {
-            await User.update(
-              {
-                password: await bcrypt.hash(body.newPassword, 15),
-              },
-              { where: { email: { [Op.iLike]: user.email } } }
-            );
-            await UserAgent.update(
-              {
-                is_logged_in: false,
-                logout_time: "now()",
-              },
-              { where: { id: { [Op.not]: id } } }
-            );
+          await User.update(
+            {
+              password: await bcrypt.hash(body.newPassword, 15),
+            },
+            { where: { email: { [Op.iLike]: user.email } } }
+          );
+          await UserAgent.update(
+            {
+              is_logged_in: false,
+              logout_time: "now()",
+            },
+            { where: { id: { [Op.not]: userAgentId.dataValues.id } } }
+          );
 
-            req.flash("success-msg", "Đổi mật khẩu thành công.");
-            return res.redirect("/");
-          }
+          req.flash("success-msg", "Đổi mật khẩu thành công.");
+          return res.redirect("/");
         }
       } catch (e) {
         return next(e);

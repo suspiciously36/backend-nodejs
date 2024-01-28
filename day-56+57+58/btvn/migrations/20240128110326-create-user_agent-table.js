@@ -1,37 +1,50 @@
 "use strict";
+
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("users", {
+    await queryInterface.createTable("user_agent", {
       id: {
+        type: Sequelize.INTEGER,
         allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
+        autoIncrement: true,
+      },
+      user_id: {
         type: Sequelize.INTEGER,
       },
-      name: {
+      device_type: {
         type: Sequelize.STRING,
       },
-      email: {
+      os_name: {
         type: Sequelize.STRING,
       },
-      password: {
+      client_name: {
         type: Sequelize.STRING,
+      },
+      logout_time: {
+        type: Sequelize.DATE,
+      },
+      login_time: {
+        type: Sequelize.DATE,
       },
       created_at: {
-        allowNull: false,
         type: Sequelize.DATE,
       },
       updated_at: {
-        allowNull: false,
         type: Sequelize.DATE,
       },
-      status: {
+      user_agent: {
+        type: Sequelize.STRING,
+      },
+      is_logged_in: {
         type: Sequelize.BOOLEAN,
+        defaultValue: false,
       },
     });
   },
+
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("users");
+    await queryInterface.dropTable("user_agent");
   },
 };

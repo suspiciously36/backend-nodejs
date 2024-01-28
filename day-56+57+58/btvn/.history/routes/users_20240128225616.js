@@ -14,7 +14,7 @@ router.get("/", function (req, res, next) {
   res.send("respond with a resource");
 });
 
-router.get("/test-mail", async function runSample() {
+router.get("test-mail", async function runSample() {
   // Obtain user credentials to use for the request
   const auth = await authenticate({
     keyfilePath: path.join(__dirname, "../oauth2.keys.json"),
