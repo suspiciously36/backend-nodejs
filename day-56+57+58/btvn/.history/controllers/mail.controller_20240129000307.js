@@ -1,26 +1,14 @@
 "use strict";
 
 const { string } = require("yup");
-const path = require("path");
+
 const sendMail = require("../utils/mail");
 
 module.exports = {
   sendMailForm(req, res) {
     res.render("sendMail", { req });
   },
-  handlePixelTracking(req, res) {
-    const options = {
-      root: path.join(__dirname, "../public/images"),
-    };
-    res.sendFile("pixel.png", options, (err) => {
-      if (err) {
-        console.log(`there's an err: ${err}`);
-      } else {
-        console.log(`file sent: at ${new Date()}`);
-      }
-    });
-  },
-  async handleSendMail(req, res, next) {
+  async handleSendMail(req, res) {
     // console.log(req);
     const rule = {
       sendTo: string().required(

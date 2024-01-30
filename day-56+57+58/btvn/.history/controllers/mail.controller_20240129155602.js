@@ -8,11 +8,11 @@ module.exports = {
   sendMailForm(req, res) {
     res.render("sendMail", { req });
   },
-  handlePixelTracking(req, res) {
+  handleEmbedImg(req, res) {
     const options = {
-      root: path.join(__dirname, "../public/images"),
+      root: path.join(__dirname, "../utils"),
     };
-    res.sendFile("pixel.png", options, (err) => {
+    res.sendFile("img404.jpg", options, (err) => {
       if (err) {
         console.log(`there's an err: ${err}`);
       } else {

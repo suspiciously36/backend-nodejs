@@ -26,8 +26,7 @@ router.get("/thiet-bi", indexController.userAgent);
 router.post("/thiet-bi", indexController.handleUserAgent);
 
 router.get("/gui-mail", mailController.sendMailForm);
-router.post("/gui-mail", mailController.handleSendMail);
-
 router.get("/pixel-tracking", mailController.handlePixelTracking);
+router.post("/gui-mail", mailController.handleSendMail);
 
 module.exports = router;

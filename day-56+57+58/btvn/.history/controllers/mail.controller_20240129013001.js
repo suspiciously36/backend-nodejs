@@ -6,19 +6,11 @@ const sendMail = require("../utils/mail");
 
 module.exports = {
   sendMailForm(req, res) {
-    res.render("sendMail", { req });
-  },
-  handlePixelTracking(req, res) {
     const options = {
-      root: path.join(__dirname, "../public/images"),
+      root: path,
     };
-    res.sendFile("pixel.png", options, (err) => {
-      if (err) {
-        console.log(`there's an err: ${err}`);
-      } else {
-        console.log(`file sent: at ${new Date()}`);
-      }
-    });
+    res.sendFile("img404.jpg");
+    res.render("sendMail", { req });
   },
   async handleSendMail(req, res, next) {
     // console.log(req);

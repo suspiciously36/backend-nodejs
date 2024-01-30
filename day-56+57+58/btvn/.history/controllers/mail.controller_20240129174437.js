@@ -12,7 +12,7 @@ module.exports = {
     const options = {
       root: path.join(__dirname, "../public/images"),
     };
-    res.sendFile("pixel.png", options, (err) => {
+    res.sendFile("ohyeah.png", options, (err) => {
       if (err) {
         console.log(`there's an err: ${err}`);
       } else {

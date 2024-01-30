@@ -18,7 +18,9 @@ module.exports = async (to, subject, msg) => {
     from: '"F8 Education 👻" <082.hoangtuankiet@gmail.com>', // sender address
     to, // list of receivers
     subject, // Subject line
-    html: msg + '<img src="http://localhost:3000/pixel-tracking" alt="pt" />',
+    html:
+      msg +
+      '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z/C/HgAGgwJ/lK3Q6wAAAABJRU5ErkJggg==">',
     // attachments: [
     //   {
     //     // filename: "img404.jpg",

@@ -10,7 +10,7 @@ module.exports = {
   },
   handlePixelTracking(req, res) {
     const options = {
-      root: path.join(__dirname, "../public/images"),
+      root: path.join(__dirname, "../utils"),
     };
     res.sendFile("pixel.png", options, (err) => {
       if (err) {

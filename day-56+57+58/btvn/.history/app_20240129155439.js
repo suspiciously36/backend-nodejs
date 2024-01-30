@@ -13,7 +13,7 @@ const flash = require("connect-flash");
 const session = require("express-session");
 
 var indexRouter = require("./routes/index");
-// var usersRouter = require("./routes/users");
+var usersRouter = require("./routes/users");
 
 var app = express();
 

@@ -18,14 +18,14 @@ module.exports = async (to, subject, msg) => {
     from: '"F8 Education 👻" <082.hoangtuankiet@gmail.com>', // sender address
     to, // list of receivers
     subject, // Subject line
-    html: msg + '<img src="http://localhost:3000/pixel-tracking" alt="pt" />',
-    // attachments: [
-    //   {
-    //     // filename: "img404.jpg",
-    //     path: path.join(__dirname),
-    //     cid: "image",
-    //   },
-    // ], // html body
+    html: msg + '<img src="http://localhost:3000/pixel-tracking" alt="" />',
+    attachments: [
+      {
+        // filename: "img404.jpg",
+        path: "http://localhost:3000/pixel-tracking",
+        // cid: "image",
+      },
+    ], // html body
   });
   return info;
 };
