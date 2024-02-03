@@ -1,6 +1,6 @@
 const { string } = require("yup");
 const sendMail = require("../../utils/mail");
-const { User } = require("../../models/index");
+const { User, Provider } = require("../../models/index");
 const { Op } = require("sequelize");
 const md5 = require("md5");
 const moment = require("moment");
@@ -14,8 +14,67 @@ module.exports = {
     const error = req.flash("error");
     res.render("auth/login", { error, req });
   },
-  register(req, res) {},
-  handleRegister(req, res, next) {},
+  register(req, res) {
+    const msg = req.flash("msg");
+    const passwordMsg = req.flash("password-msg");
+    res.render("auth/register", { msg, req, passwordMsg });
+  },
+  async handleRegister(req, res, next) {
+    const rule = {
+      name: string().required("You must have a name."),
+      email: string()
+        .required("Please enter your Email.")
+        .email("Email wrong format."),
+      password: string().required("Please enter your Password."),
+      password2: string().required("Please re-enter your Password."),
+    };
+
+    const body = await req.validate(req.body, rule);
+
+    if (body) {
+      try {
+        const user = await User.findOne({
+          where: { email: { [Op.iLike]: body.email } },
+        });
+
+        if (user) {
+          req.flash("msg", "Email already exists.");
+        } else {
+          if (body.password !== body.password2) {
+            req.flash("password-msg", "Passwords do not match.");
+          } else {
+            const provider = await Provider.findOne({
+              where: { name: `localEmail` },
+            });
+            if (provider) {
+              await User.update(
+                { provider_id: provider.id },
+                { where: { email: body.email } }
+              );
+            }
+
+            const newlyCreatedProvider = await Provider.findOne({
+              where: { name: `localEmail` },
+            });
+
+            await User.create({
+              name: body.name,
+              email: body.email,
+              password: await bcrypt.hash(body.password, 10),
+              provider_id: newlyCreatedProvider.id,
+            });
+
+            req.flash("success-msg", "Account created successfully.");
+
+            return res.redirect("/auth/login");
+          }
+        }
+      } catch (e) {
+        return next(e);
+      }
+    }
+    return res.redirect("/auth/register");
+  },
   forgotPassword(req, res) {
     const msg = req.flash("msg");
     const successMsg = req.flash("success-msg");

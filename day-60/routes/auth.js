@@ -36,4 +36,7 @@ router.post("/forgot-password", authController.handleForgotPassword);
 router.get("/reset-password", authController.resetPassword);
 router.post("/reset-password", authController.handleResetPassword);
 
+router.get("/register", authController.register);
+router.post("/register", authController.handleRegister);
+
 module.exports = router;

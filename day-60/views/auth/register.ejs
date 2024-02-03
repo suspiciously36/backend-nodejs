@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trang đăng ký</title>
+  </head>
+  <body>
+    <h1 class="d-flex justify-content-center mt-5">Register Page</h1>
+    <div class="d-flex justify-content-center mb-3">
+      <span class="text-success"
+        ><% if (msg?.length) { %> <%= msg %> <% } %> </span
+      ><span class="text-danger"
+        ><% if (passwordMsg?.length) { %> <%= passwordMsg %> <% } %></span
+      >
+    </div>
+    <main class="form-signin w-50 m-auto">
+      <form action="" method="post">
+        <div class="form-floating mb-3">
+          <input
+            class="form-control"
+            type="text"
+            name="name"
+            id="floatingName"
+            placeholder="Name..."
+            value="<%= req?.olds?.name %>"
+          />
+          <label for="floatingName">Name...</label>
+          <span class="text-danger"><%= req?.errors?.name %></span>
+        </div>
+        <div class="form-floating mb-3">
+          <input
+            class="form-control"
+            type="email"
+            name="email"
+            id="floatingEmail"
+            placeholder="Email..."
+            value="<%= req?.olds?.email %>"
+          />
+          <label for="floatingEmail">Email...</label>
+
+          <span class="text-danger"><%= req?.errors?.email %></span>
+        </div>
+        <div class="form-floating mb-3">
+          <input
+            class="form-control"
+            type="password"
+            class="form-control"
+            name="password"
+            id="floatingPassword"
+            placeholder="Password..."
+          />
+          <label for="floatingPassword">Password...</label>
+
+          <span class="text-danger"><%= req?.errors?.password %></span>
+        </div>
+        <div class="form-floating mb-3">
+          <input
+            class="form-control"
+            type="password"
+            name="password2"
+            id="floatingPassword2"
+            placeholder="Password..."
+          />
+          <label for="floatingPassword">Re-enter password...</label>
+
+          <span class="text-danger"><%= req?.errors?.password2 %></span>
+        </div>
+        <button class="btn btn-primary w-100 py-2 mb-3">Register</button>
+        <a href="/dang-nhap" class="d-flex justify-content-end"
+          >Already have an account? Log in now!</a
+        >
+      </form>
+    </main>
+  </body>
+</html>
