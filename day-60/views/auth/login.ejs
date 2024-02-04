@@ -1,6 +1,8 @@
 <h1 class="d-flex justify-content-center mt-3 mb-3">Login Page</h1>
 <% if (error.length) { %>
 <div class="text-danger text-center mb-3"><%= error %></div>
+<% } %> <% if (successMsg?.length) { %>
+<div class="text-success text-center mb-3"><%= successMsg %></div>
 <% } %>
 <main class="form-signin w-50 m-auto">
   <form action="" method="post">

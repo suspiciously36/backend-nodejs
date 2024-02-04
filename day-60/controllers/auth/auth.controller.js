@@ -12,7 +12,8 @@ module.exports = {
       return res.redirect("/");
     }
     const error = req.flash("error");
-    res.render("auth/login", { error, req });
+    const successMsg = req.flash("success-msg");
+    res.render("auth/login", { error, req, successMsg });
   },
   register(req, res) {
     const msg = req.flash("msg");
@@ -47,22 +48,36 @@ module.exports = {
               where: { name: `localEmail` },
             });
             if (provider) {
-              await User.update(
-                { provider_id: provider.id },
-                { where: { email: body.email } }
-              );
+              if (!user) {
+                await User.create({
+                  name: body.name,
+                  email: body.email,
+                  password: await bcrypt.hash(body.password, 10),
+                  provider_id: provider.id,
+                });
+              } else {
+                await User.update(
+                  {
+                    provider_id: provider.id,
+                    name: body.name,
+                    email: body.email,
+                    password: await bcrypt.hash(body.password, 10),
+                  },
+                  { where: { email: body.email } }
+                );
+              }
+            } else {
+              const newlyCreatedProvider = await Provider.create({
+                name: `localEmail`,
+              });
+
+              await User.create({
+                name: body.name,
+                email: body.email,
+                password: await bcrypt.hash(body.password, 10),
+                provider_id: newlyCreatedProvider.id,
+              });
             }
-
-            const newlyCreatedProvider = await Provider.findOne({
-              where: { name: `localEmail` },
-            });
-
-            await User.create({
-              name: body.name,
-              email: body.email,
-              password: await bcrypt.hash(body.password, 10),
-              provider_id: newlyCreatedProvider.id,
-            });
 
             req.flash("success-msg", "Account created successfully.");
 
@@ -113,7 +128,7 @@ module.exports = {
             }
           );
 
-          const content = `<a href="http://localhost:3000/auth/reset-password?email=${body.email}&reset_token=${reset_token}">Click me to reset your password!</a>`;
+          const content = `<a href="https://google-login-day60-hw.vercel.app/auth/reset-password?email=${body.email}&reset_token=${reset_token}">Click me to reset your password!</a>`;
           const info = await sendMail(
             body.email,
             `You requested for a password reset.`,
@@ -124,6 +139,7 @@ module.exports = {
               "success-msg",
               "Reset password link sent. Please check your email!"
             );
+            return res.redirect("/auth/login");
           }
         } else {
           req.flash("error-msg", "Email does not exist.");
@@ -136,6 +152,7 @@ module.exports = {
   },
   async resetPassword(req, res, next) {
     const msg = req.flash("msg");
+    const passwordMsg = req.flash("password-msg");
     const { email, reset_token } = req.query;
     try {
       const user = await User.findOne({
@@ -152,7 +169,7 @@ module.exports = {
       return next(e);
     }
     // console.log(moment().valueOf());
-    res.render("auth/resetPassword", { msg, req });
+    res.render("auth/resetPassword", { msg, req, passwordMsg });
   },
   async handleResetPassword(req, res, next) {
     const rule = {
@@ -165,7 +182,7 @@ module.exports = {
     if (body) {
       try {
         if (body.password !== body.password2) {
-          req.flash("error-msg", "Passwords do not match.");
+          req.flash("password-msg", "Passwords do not match.");
         }
         await User.update(
           {
@@ -177,11 +194,15 @@ module.exports = {
             where: { email: { [Op.iLike]: req.query.email } },
           }
         );
-        const content = `<a href="http://localhost:3000/auth/login">You have reset password. Click me to log in and have fun!</a>`;
+        const content = `<a href="https://google-login-day60-hw.vercel.app/auth/login">You have reset password. Click me to log in and have fun!</a>`;
         await sendMail(
           req.query.email,
           `Reset password successfully.`,
           content
+        );
+        req.flash(
+          "success-msg",
+          "Password reset. You can log in now with your new password."
         );
         return res.redirect("/auth/login");
       } catch (e) {
