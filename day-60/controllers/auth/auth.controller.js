@@ -13,7 +13,7 @@ module.exports = {
     }
     const error = req.flash("error");
     const successMsg = req.flash("success-msg");
-    res.render("auth/login", { error, req, successMsg });
+    res.render("auth/login", { error, req, successMsg, layout: "auth/layout" });
   },
   register(req, res) {
     const msg = req.flash("msg");
